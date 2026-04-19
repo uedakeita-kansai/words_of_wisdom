@@ -4,6 +4,7 @@
   "type": "module",
   "scripts": {
     "test": "node --test scripts/lib/quote-utils.test.mjs",
-    "generate:today": "node scripts/generate-today-json.mjs"
+    "generate:today": "node scripts/generate-today-json.mjs",
+    "ingest:monthly": "node scripts/ingest-monthly-quotes.mjs"
   }
 }

@@ -12,6 +12,7 @@
 - `supabase/migrations/0001_quotes_schema.sql`
 - `supabase/migrations/0002_quote_batch_and_rpc.sql`
 - `supabase/migrations/0003_quote_batch_cron.sql`
+- `supabase/migrations/0004_quote_ingestion_pipeline.sql`
 - `supabase/seed.sql`
 
 ## How scheduling works
@@ -112,3 +113,54 @@ node scripts/generate-today-json.mjs --input-file today.json --output /tmp/today
 ```bash
 npm test
 ```
+
+## Monthly quote ingestion (LLM + staging)
+
+### What it does
+- 月1回、`data/monthly_quote_candidates.json` を取り込み
+- 翻訳不足がある行は `OPENAI_API_KEY` があれば LLM で補完
+- `quote_candidates` に保存
+- `validate_quote_candidates` で自動検証
+- `promote_quote_candidates` で `quotes` へ昇格
+- その後、翌月スケジュールを再生成
+
+### Required migration
+`0004_quote_ingestion_pipeline.sql` を実行してください。
+
+### Command
+```bash
+SUPABASE_URL="https://<project-ref>.supabase.co" \
+SUPABASE_SERVICE_ROLE_KEY="<service-role-key>" \
+OPENAI_API_KEY="<openai-api-key>" \
+npm run ingest:monthly
+```
+
+`OPENAI_API_KEY` が無くても実行できます（`ja_translation` / `en_translation` 欠落行は検証で reject されます）。
+
+### Candidate file format
+`data/monthly_quote_candidates.json` は配列:
+```json
+[
+  {
+    "original_text": "...",
+    "speaker_name": "...",
+    "source": "...",
+    "source_url": "",
+    "birth_year": 0,
+    "death_year": 0,
+    "ja_translation": "...",
+    "en_translation": "...",
+    "metadata": {}
+  }
+]
+```
+
+### Automation
+`/.github/workflows/monthly-ingest-quotes.yml`:
+- 毎月25日 00:20 JST 実行
+- 手動実行 (`workflow_dispatch`) 可能
+
+必要な GitHub repository secrets:
+- `SUPABASE_URL`
+- `SUPABASE_SERVICE_ROLE_KEY`
+- `OPENAI_API_KEY`（LLM補完を使う場合）
