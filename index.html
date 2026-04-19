@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>A daily words of wisdom</title>
+    <meta
+      name="description"
+      content="A daily quote with Japanese, English, original text, and speaker information."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Zen+Old+Mincho:wght@700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="quote-page" data-api-endpoint="./today.json">
+      <header class="hero">
+        <h1 class="site-title">A daily words of wisdom</h1>
+        <p class="date-text" data-field="date">18 Apr 2026 in Tokyo</p>
+      </header>
+
+      <article class="lower-card" aria-live="polite">
+        <section class="quote-card">
+          <p class="quote-ja" data-field="ja_translation">吟味されざる生は、生きるに値しない</p>
+
+          <p class="quote-en" data-field="en_translation">The unexamined life is not worth living</p>
+
+          <section class="quote-original-block">
+            <p class="label">Original</p>
+            <p class="quote-original" data-field="original_text">ὁ δὲ ἀνεξέταστος βίος οὐ βιωτὸς ἀνθρώπῳ</p>
+          </section>
+        </section>
+        <section class="speaker-block">
+          <p class="speaker-line">
+            <span class="speaker-prefix">Words of</span>
+            <span class="speaker-name" data-field="speaker_name">Socrates</span>
+            <span class="speaker-years" data-field="speaker_years">(470 BC - 399 BC)</span>
+          </p>
+          <p class="source-line" data-field="source" hidden></p>
+        </section>
+      </article>
+      
+    </main>
+
+    <script src="./script.js" defer></script>
+  </body>
+</html>

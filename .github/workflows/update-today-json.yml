@@ -1,0 +1,38 @@
+name: Update today.json
+
+on:
+  schedule:
+    - cron: "10 15 * * *" # 00:10 JST
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Generate today.json
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: npm run generate:today
+
+      - name: Commit if changed
+        run: |
+          if git diff --quiet today.json; then
+            echo "No changes in today.json"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add today.json
+          git commit -m "chore: update today.json"
+          git push
